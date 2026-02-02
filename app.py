@@ -2,6 +2,8 @@
 # pip install streamlit pandas geopandas pydeck openpyxl
 
 import re
+import os
+import requests
 from difflib import get_close_matches
 
 import numpy as np
@@ -20,6 +22,37 @@ XLSX_SUB = "data/Alt Endeksler.xlsx"
 GEO_PATH = "data/adana_vulnerability.geojson"  # elindeki dosya
 # Alternatif: SHP (geojson yoksa aç)
 # GEO_PATH = "adana_mersin.shp"
+
+def ensure_file(local_path, secret_key):
+    """
+    Ensures the file exists locally. 
+    1. If it exists, returns local_path.
+    2. If not, attempts to download from st.secrets["data_urls"][secret_key].
+    """
+    if os.path.exists(local_path):
+        return local_path
+    
+    # Check secrets
+    if "data_urls" not in st.secrets or secret_key not in st.secrets["data_urls"]:
+        st.error(f"Dosya bulunamadı ve indirme linki tanımlanmamış: {local_path} (Secret: {secret_key})")
+        st.stop()
+        
+    url = st.secrets["data_urls"][secret_key]
+    
+    # Try creating directory if missing
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    
+    with st.spinner(f"Veri indiriliyor: {local_path}..."):
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            with open(local_path, "wb") as f:
+                f.write(r.content)
+        except Exception as e:
+            st.error(f"Veri indirilirken hata oluştu: {e}")
+            st.stop()
+            
+    return local_path
 
 # -------------------- Column name helpers --------------------
 def clean_cols(df: pd.DataFrame) -> pd.DataFrame:
@@ -251,13 +284,51 @@ def load_geo(path: str) -> gpd.GeoDataFrame:
     return gdf
 
 # -------------------- App --------------------
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == st.secrets["general"]["password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+# -------------------- App --------------------
 def main():
     st.set_page_config(page_title="Adana Mahalle Kırılganlık Paneli", layout="wide")
+    
+    if not check_password():
+        st.stop()
+        
     st.title("Adana Mahalle Kırılganlık Paneli")
 
     # Load Data (Centralized & Cached)
-    df = load_data_central(XLSX_MAIN, XLSX_SUB)
-    gdf = load_geo(GEO_PATH)
+    # Ensure files exist (download if needed)
+    xlsx_main_path = ensure_file(XLSX_MAIN, "main_excel")
+    xlsx_sub_path = ensure_file(XLSX_SUB, "sub_excel")
+    geo_path = ensure_file(GEO_PATH, "geo_file")
+
+    df = load_data_central(xlsx_main_path, xlsx_sub_path)
+    gdf = load_geo(geo_path)
     
     # Debug info for Tech tab
     raw_len = len(df)

@@ -15,8 +15,8 @@ ENV/
 Thumbs.db
 
 # Project Data (Optional: ignore if you don't want to share raw data)
-# data/*.xlsx
-# data/*.geojson
+data/*.xlsx
+data/*.geojson
 
 # Temporary/Debug
 debug_log.txt
