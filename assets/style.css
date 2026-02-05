@@ -1,0 +1,413 @@
+/* ==========================================
+   Vintage Archive Theme - Custom CSS
+   ========================================== */
+
+/* Import Vintage Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ==========================================
+   CSS Variables - Vintage Color Palette
+   ========================================== */
+:root {
+    --vintage-bg: #E8DCC8;
+    --vintage-card: #F5EFE6;
+    --vintage-text: #3D2E1F;
+    --vintage-border: #8B7355;
+    --vintage-hover: #6B5744;
+    --vintage-secondary: #5C4A3A;
+    --vintage-light: #F9F5EE;
+    --vintage-shadow: rgba(61, 46, 31, 0.15);
+}
+
+/* ==========================================
+   Global Styles
+   ========================================== */
+.stApp {
+    background-color: var(--vintage-bg);
+    background-image: 
+        linear-gradient(90deg, rgba(139, 115, 85, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(139, 115, 85, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Crimson Text', 'EB Garamond', Georgia, serif;
+    color: var(--vintage-text);
+}
+
+/* Main Container */
+.main .block-container {
+    padding: 2rem 3rem;
+    max-width: 1400px;
+}
+
+/* ==========================================
+   Typography
+   ========================================== */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'EB Garamond', Georgia, serif;
+    color: var(--vintage-text);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+h1 {
+    font-size: 2.8rem;
+    border-bottom: 2px solid var(--vintage-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid var(--vintage-border);
+    padding-left: 1rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: var(--vintage-secondary);
+}
+
+p, span, div {
+    font-family: 'Crimson Text', Georgia, serif;
+    line-height: 1.7;
+    color: var(--vintage-text);
+}
+
+/* ==========================================
+   Sidebar Styling
+   ========================================== */
+[data-testid="stSidebar"] {
+    background-color: var(--vintage-card);
+    border-right: 3px solid var(--vintage-border);
+    box-shadow: 4px 0 12px var(--vintage-shadow);
+}
+
+[data-testid="stSidebar"] .stMarkdown {
+    color: var(--vintage-text);
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: var(--vintage-text);
+    font-family: 'EB Garamond', serif;
+}
+
+/* Sidebar Headers */
+[data-testid="stSidebar"] .element-container h2 {
+    background-color: var(--vintage-border);
+    color: var(--vintage-light);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+/* ==========================================
+   Buttons & Interactive Elements
+   ========================================== */
+.stButton > button {
+    background-color: var(--vintage-border);
+    color: var(--vintage-light);
+    border: 2px solid var(--vintage-hover);
+    border-radius: 6px;
+    padding: 0.5rem 1.5rem;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 6px var(--vintage-shadow);
+}
+
+.stButton > button:hover {
+    background-color: var(--vintage-hover);
+    border-color: var(--vintage-text);
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 10px var(--vintage-shadow);
+}
+
+.stDownloadButton > button {
+    background-color: var(--vintage-secondary);
+    color: var(--vintage-light);
+    border: 2px solid var(--vintage-border);
+}
+
+/* ==========================================
+   Selectbox & Input Elements
+   ========================================== */
+.stSelectbox > div > div,
+.stMultiSelect > div > div,
+.stTextInput > div > div {
+    background-color: var(--vintage-light);
+    border: 2px solid var(--vintage-border);
+    border-radius: 6px;
+    color: var(--vintage-text);
+    font-family: 'Crimson Text', serif;
+}
+
+.stSelectbox label,
+.stMultiSelect label,
+.stTextInput label,
+.stSlider label,
+.stCheckbox label,
+.stRadio label {
+    color: var(--vintage-text);
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* ==========================================
+   Slider
+   ========================================== */
+.stSlider > div > div > div {
+    background-color: var(--vintage-border);
+}
+
+.stSlider > div > div > div > div {
+    background-color: var(--vintage-hover);
+}
+
+/* ==========================================
+   Tabs
+   ========================================== */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background-color: transparent;
+    border-bottom: 2px solid var(--vintage-border);
+}
+
+.stTabs [data-baseweb="tab"] {
+    background-color: var(--vintage-card);
+    border: 2px solid var(--vintage-border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--vintage-text);
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    background-color: var(--vintage-light);
+    color: var(--vintage-hover);
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: var(--vintage-bg);
+    border-bottom: 2px solid var(--vintage-bg);
+    color: var(--vintage-text);
+    font-weight: 700;
+}
+
+/* ==========================================
+   Metrics (KPI Cards)
+   ========================================== */
+[data-testid="stMetricValue"] {
+    font-family: 'EB Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--vintage-border);
+}
+
+[data-testid="stMetricLabel"] {
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    color: var(--vintage-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+[data-testid="stMetric"] {
+    background-color: var(--vintage-card);
+    border: 2px solid var(--vintage-border);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 3px 3px 8px var(--vintage-shadow);
+}
+
+/* ==========================================
+   DataFrames & Tables
+   ========================================== */
+.stDataFrame {
+    border: 2px solid var(--vintage-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 2px 2px 8px var(--vintage-shadow);
+}
+
+.stDataFrame table {
+    font-family: 'Crimson Text', serif;
+    background-color: var(--vintage-light);
+}
+
+.stDataFrame thead tr th {
+    background-color: var(--vintage-border);
+    color: var(--vintage-light);
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    border-bottom: 2px solid var(--vintage-hover);
+}
+
+.stDataFrame tbody tr:nth-child(even) {
+    background-color: var(--vintage-card);
+}
+
+.stDataFrame tbody tr:hover {
+    background-color: rgba(139, 115, 85, 0.1);
+}
+
+/* ==========================================
+   Expander
+   ========================================== */
+.streamlit-expanderHeader {
+    background-color: var(--vintage-card);
+    border: 2px solid var(--vintage-border);
+    border-radius: 6px;
+    color: var(--vintage-text);
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.streamlit-expanderHeader:hover {
+    background-color: var(--vintage-light);
+    border-color: var(--vintage-hover);
+}
+
+/* ==========================================
+   Info/Warning/Error Boxes
+   ========================================== */
+.stAlert {
+    border-radius: 8px;
+    border-width: 2px;
+    font-family: 'Crimson Text', serif;
+}
+
+[data-testid="stAlert"] {
+    background-color: var(--vintage-card);
+    border-color: var(--vintage-border);
+    color: var(--vintage-text);
+}
+
+/* ==========================================
+   Divider
+   ========================================== */
+hr {
+    border: none;
+    border-top: 2px solid var(--vintage-border);
+    margin: 2rem 0;
+    opacity: 0.5;
+}
+
+/* ==========================================
+   Plotly Charts
+   ========================================== */
+.js-plotly-plot {
+    border: 2px solid var(--vintage-border);
+    border-radius: 8px;
+    background-color: var(--vintage-light);
+    box-shadow: 2px 2px 8px var(--vintage-shadow);
+}
+
+/* ==========================================
+   Pydeck Map Container
+   ========================================== */
+[data-testid="stDeckGlJsonChart"] {
+    border: 3px solid var(--vintage-border);
+    border-radius: 8px;
+    box-shadow: 4px 4px 12px var(--vintage-shadow);
+    overflow: hidden;
+}
+
+/* ==========================================
+   Legend Box (Custom)
+   ========================================== */
+.legend-box {
+    background-color: var(--vintage-card);
+    border: 2px solid var(--vintage-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 3px 3px 10px var(--vintage-shadow);
+}
+
+/* ==========================================
+   Scrollbar Styling
+   ========================================== */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--vintage-card);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--vintage-border);
+    border-radius: 6px;
+    border: 2px solid var(--vintage-card);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--vintage-hover);
+}
+
+/* ==========================================
+   Vintage Decorative Elements
+   ========================================== */
+.vintage-ornament {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--vintage-border);
+    margin: 1rem 0;
+}
+
+.vintage-ornament::before,
+.vintage-ornament::after {
+    content: "◆";
+    margin: 0 1rem;
+    opacity: 0.5;
+}
+
+/* ==========================================
+   Caption Text
+   ========================================== */
+.stCaption {
+    color: var(--vintage-secondary);
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   Radio Buttons
+   ========================================== */
+.stRadio > div {
+    background-color: var(--vintage-card);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.stRadio label {
+    color: var(--vintage-text);
+}
+
+/* ==========================================
+   Checkbox
+   ========================================== */
+.stCheckbox {
+    color: var(--vintage-text);
+}
+
+.stCheckbox > label > div {
+    background-color: var(--vintage-light);
+    border: 2px solid var(--vintage-border);
+}

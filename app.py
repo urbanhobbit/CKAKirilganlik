@@ -23,6 +23,17 @@ GEO_PATH = "data/adana_vulnerability.geojson"  # elindeki dosya
 # Alternatif: SHP (geojson yoksa aç)
 # GEO_PATH = "adana_mersin.shp"
 
+# -------------------- CSS Loader --------------------
+def load_css():
+    """Load custom vintage CSS styles"""
+    css_file = "assets/style.css"
+    if os.path.exists(css_file):
+        with open(css_file) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    else:
+        st.warning(f"CSS dosyası bulunamadı: {css_file}")
+
+
 def ensure_file(local_path, secret_key):
     """
     Ensures the file exists locally. 
@@ -316,6 +327,9 @@ def check_password():
 def main():
     st.set_page_config(page_title="Adana Mahalle Kırılganlık Paneli", layout="wide")
     
+    # Load custom vintage CSS
+    load_css()
+    
     if not check_password():
         st.stop()
         
@@ -505,19 +519,22 @@ def main():
             ), use_container_width=True, height=750) 
         
         with c_dummy:
-             # Legend (Simple HTML overlay simulation)
-             st.markdown("#### Lejant")
+             # Legend (Vintage styled)
+             st.markdown('<div class="legend-box">', unsafe_allow_html=True)
+             st.markdown("#### 📜 Lejant")
              st.markdown(f"**{sel_label}**")
              st.markdown(
                  """
                  <div style='background: linear-gradient(to right, rgb(44,123,182), rgb(171,217,233), rgb(255,255,191), rgb(253,174,97), rgb(215,25,28)); height: 20px; width: 100%; border-radius: 5px;'></div>
-                 <div style='display: flex; justify_content: space-between; font-size: 0.8em;'>
+                 <div style='display: flex; justify-content: space-between; font-size: 0.9em; margin-top: 0.5rem;'>
                      <span>Düşük</span>
                      <span>Yüksek</span>
                  </div>
+                 <div class="vintage-ornament" style="margin-top: 1rem;">◆</div>
                  """, unsafe_allow_html=True
              )
              st.info("Normalize edilmiş (0-1) skala kullanılır.")
+             st.markdown('</div>', unsafe_allow_html=True)
 
     with tab_charts:
         # Histogram
