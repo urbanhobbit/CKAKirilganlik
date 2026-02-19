@@ -34,17 +34,19 @@ def load_css():
         st.warning(f"CSS dosyası bulunamadı: {css_file}")
 
 
-def ensure_file(local_path, secret_key):
+def ensure_file(local_path, secret_key, force_download=False):
     """
     Ensures the file exists locally. 
-    1. If it exists, returns local_path.
-    2. If not, attempts to download from st.secrets["data_urls"][secret_key].
+    1. If it exists and force_download is False, returns local_path.
+    2. If not (or force), attempts to download from st.secrets["data_urls"][secret_key].
     """
-    if os.path.exists(local_path):
+    if os.path.exists(local_path) and not force_download:
         return local_path
     
-    # Check secrets
+    # Check secrets for URL
     if "data_urls" not in st.secrets or secret_key not in st.secrets["data_urls"]:
+        if os.path.exists(local_path): # Fallback to existing if URL missing
+             return local_path
         st.error(f"Dosya bulunamadı ve indirme linki tanımlanmamış: {local_path} (Secret: {secret_key})")
         st.stop()
         
@@ -53,15 +55,19 @@ def ensure_file(local_path, secret_key):
     # Try creating directory if missing
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     
-    with st.spinner(f"Veri indiriliyor: {local_path}..."):
+    with st.spinner(f"Veri indiriliyor (İnternet): {local_path}..."):
         try:
             r = requests.get(url)
             r.raise_for_status()
             with open(local_path, "wb") as f:
                 f.write(r.content)
+            st.success(f"Güncellendi: {local_path}")
         except Exception as e:
             st.error(f"Veri indirilirken hata oluştu: {e}")
-            st.stop()
+            if not os.path.exists(local_path):
+                st.stop()
+            # If download fails but file exists, use old one
+            st.warning("İndirme başarısız, mevcut eski dosya kullanılacak.")
             
     return local_path
 
@@ -245,10 +251,14 @@ def prepare_metric_data(df, metric_meta: MetricMetadata):
 
 # -------------------- Data Loaders (Optimized) --------------------
 @st.cache_data
-def load_data_central(main_path, sub_path):
+def load_data_v2(main_path, sub_path):
     # 1. Load Files
-    df_main = pd.read_excel(main_path)
-    df_sub = pd.read_excel(sub_path)
+    try:
+        df_main = pd.read_excel(main_path)
+        df_sub = pd.read_excel(sub_path)
+    except Exception as e:
+        st.error(f"Veri dosyaları okunamadı: {e}")
+        return pd.DataFrame()
     
     # 2. Clean Columns
     df_main = clean_cols(df_main)
@@ -262,6 +272,7 @@ def load_data_central(main_path, sub_path):
         
     # 4. Merge
     # Outer join to keep all data
+    # Reset suffixes to avoid collision if columns are identical
     df_full = df_main.merge(df_sub, on="MAHALLEKAYITNO", how="outer", suffixes=("", "_sub"))
     
     return df_full
@@ -335,13 +346,20 @@ def main():
         
     st.title("Adana Mahalle Kırılganlık Paneli")
 
+    # -------------------- Sidebar Controls --------------------
+    # Update Data Button for Online Refresh
+    with st.sidebar.expander("Veri Yönetimi", expanded=False):
+        force_update = st.button("Verileri İnternetten Güncelle 🔄")
+        if force_update:
+            st.cache_data.clear() # Clear cache too
+    
     # Load Data (Centralized & Cached)
-    # Ensure files exist (download if needed)
-    xlsx_main_path = ensure_file(XLSX_MAIN, "main_excel")
-    xlsx_sub_path = ensure_file(XLSX_SUB, "sub_excel")
-    geo_path = ensure_file(GEO_PATH, "geo_file")
+    # Ensure files exist (download if needed or forced)
+    xlsx_main_path = ensure_file(XLSX_MAIN, "main_excel", force_download=force_update)
+    xlsx_sub_path = ensure_file(XLSX_SUB, "sub_excel", force_download=force_update)
+    geo_path = ensure_file(GEO_PATH, "geo_file", force_download=force_update)
 
-    df = load_data_central(xlsx_main_path, xlsx_sub_path)
+    df = load_data_v2(xlsx_main_path, xlsx_sub_path)
     gdf = load_geo(geo_path)
     
     # Debug info for Tech tab
@@ -562,6 +580,12 @@ def main():
         # Drop original column if it exists to avoid rename collision
         if selected_metric_col in display_df.columns:
             display_df = display_df.drop(columns=[selected_metric_col])
+        
+        # Safe Rename: Drop target columns if they already exist
+        if sel_label in display_df.columns:
+             display_df = display_df.drop(columns=[sel_label])
+        if f"{sel_label} (Norm)" in display_df.columns:
+             display_df = display_df.drop(columns=[f"{sel_label} (Norm)"])
             
         display_df = display_df.rename(columns={"val_raw": sel_label, "score_norm": f"{sel_label} (Norm)"})
         
